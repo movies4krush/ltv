@@ -1,0 +1,16 @@
+#EXTM3U
+#EXTINF:0,ZEE TV
+#EXTVLCOPT:network-caching=1000
+https://m3usmart4k.gojo45749.workers.dev?id=11694
+
+#EXTINF:0,ZEE ACTION
+#EXTVLCOPT:network-caching=1000
+https://m3usmart4k.gojo45749.workers.dev?id=656
+
+#EXTINF:0,ZEE BOLLYWOOD
+#EXTVLCOPT:network-caching=1000
+https://m3usmart4k.gojo45749.workers.dev?id=922
+
+#EXTINF:0,ZEE CINEMA
+#EXTVLCOPT:network-caching=1000
+https://m3usmart4k.gojo45749.workers.dev?id=11693
