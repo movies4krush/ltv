@@ -2,13 +2,13 @@ name: Update Digital
 
 on:
   schedule:
-    - cron: '0 */1 * * *'   # Runs every hour
-  workflow_dispatch:        # Allows manual run from Actions tab
+    - cron: '0 */1 * * *'   # Runs automatically every hour
+  workflow_dispatch:        # Enables manual execution button
   push:
     branches:
       - main
     paths:
-      - 'script/voot.py'
+      - 'script/voot.py'    # Looks for changes inside the script folder
 
 jobs:
   update-playlist:
@@ -51,7 +51,7 @@ jobs:
         env:
           TZ: Asia/Kolkata
         run: |
-          python script/voot.py
+          python script/voot.py    # Correct path to python file inside script folder
 
       - name: Commit and Push Changes
         run: |
