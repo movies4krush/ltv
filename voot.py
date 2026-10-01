@@ -3,26 +3,32 @@ import json
 import re
 import sys
 
-def fetch_cookie(m3u_url):
+def fetch_cookie(m3u_urls):
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': 'OTT Navigator',
         'Accept': '*/*'
     }
-    req = urllib.request.Request(m3u_url, headers=headers)
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        content = resp.read().decode('utf-8', errors='ignore')
     
-    # Check for EXTVLCOPT cookie match
-    match = re.search(r'#EXTVLCOPT:http-cookie=(.+)', content)
-    if match:
-        return match.group(1).strip()
-    
-    # Fallback search for standard cookie string
-    match_alt = re.search(r'hdnea=[^;\r\n\s"]+', content)
-    if match_alt:
-        return match_alt.group(0).strip()
+    for url in m3u_urls:
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                content = resp.read().decode('utf-8', errors='ignore')
+            
+            # Search for EXTVLCOPT cookie
+            match = re.search(r'#EXTVLCOPT:http-cookie=(.+)', content)
+            if match:
+                return match.group(1).strip()
+            
+            # Fallback search for hdnea cookie
+            match_alt = re.search(r'hdnea=[^;\r\n\s"]+', content)
+            if match_alt:
+                return match_alt.group(0).strip()
+        except Exception as err:
+            print(f"Warning: Endpoint {url} failed ({err})")
+            continue
 
-    raise RuntimeError('Cookie not found in response payload.')
+    raise RuntimeError('Cookie could not be extracted from any server endpoint.')
 
 def fetch_json(json_url):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
@@ -47,7 +53,7 @@ def generate_m3u(data, cookie, output_file):
         if key and len(key) < 32:
             key = key.zfill(32)
 
-        # Build stream URL with parameters
+        # Build stream URL
         url_with_params = (
             f"{mpd}?"
             f"cookie={cookie}&"
@@ -72,19 +78,23 @@ def generate_m3u(data, cookie, output_file):
         f.write('\n'.join(lines))
 
 def main():
-    m3u_url = 'https://premiumplugx.com/htt/hot.php?playlist=1'
+    # Endpoints list (uses working fallback if one fails)
+    m3u_urls = [
+        'https://premiumplugx.com/VIP/pluglist.php',
+        'https://premiumplugx.com/htt/hot.php?playlist=1'
+    ]
     json_url = 'https://sportlink-jtv.pages.dev/jhs.json'
     output = 'digital.m3u'
 
     try:
-        cookie = fetch_cookie(m3u_url)
-        print(f"Cookie extracted: {cookie[:30]}...")
+        cookie = fetch_cookie(m3u_urls)
+        print("Cookie fetched successfully.")
         data = fetch_json(json_url)
         generate_m3u(data, cookie, output)
         print(f"Successfully generated {output} with {len(data)} channels.")
     except Exception as e:
         print(f"Execution Error: {e}", file=sys.stderr)
-        sys.exit(1)  # Signal failure to GitHub Actions
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
