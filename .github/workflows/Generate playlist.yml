@@ -22,7 +22,7 @@ jobs:
         run: |
           # 1. Download webpage source using a browser User-Agent to avoid bot blocking
           curl -sL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
-            "https://streamxyash.vercel.app/" -o raw_source.html
+            "https://vzyweb.42web.io/" -o raw_source.html
 
           # 2. Extract only the lines belonging to the playlist structure
           grep -E '^ *(#EXTM3U|#EXTINF|#EXTVLCOPT|#KODIPROP|#EXTHTTP|https?://)' raw_source.html \
