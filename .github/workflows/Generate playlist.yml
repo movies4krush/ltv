@@ -21,7 +21,7 @@ jobs:
       - name: Extract M3U Playlist File
         run: |
           # 1. Download webpage source and save to raw_source.html
-          curl -sL "https://streamxyash.pages.dev" -o raw_source.html
+          curl -sL "https://vzyweb.42web.io/" -o raw_source.html
 
           # 2. Extract only the lines belonging to the playlist structure
           grep -E '^ *(#EXTM3U|#EXTINF|#EXTVLCOPT|#KODIPROP|#EXTHTTP|https?://)' raw_source.html \
